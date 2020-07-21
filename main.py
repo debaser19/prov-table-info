@@ -43,7 +43,7 @@ for table in tables:
         # loop through all the clients on the current table
         for client in clients:
             # make sure the client is on the same vlan as the table
-            if client['vlan'] == table['id']:
+            if client['vlan'] == table['id'] and client['status'] == 'Online':
                 # create the client dict and append it to the list of client dicts
                 client_dict = {"description":client['description'], "ip":client['ip'], "mac":client['mac']}
                 list_of_clients.append(client_dict)
