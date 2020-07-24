@@ -15,42 +15,40 @@ def main():
 
     network = 'L_613052499275810377'
 
+    table_id = 103
     list_of_clients = []
-
-    html_string = '''
-        <center>
-        <h1>Table X - VLAN X</h1>
-        <h3>Current Option: http://example.option/company</h3>
-
-        <style type="text/css">
-            .tg  {border-collapse:collapse;border-color:#93a1a1;border-spacing:0;}
-            .tg td{background-color:#fdf6e3;border-color:#93a1a1;border-style:solid;border-width:1px;color:#002b36;
-            font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 50px;word-break:normal;}
-            .tg th{background-color:#657b83;border-color:#93a1a1;border-style:solid;border-width:1px;color:#fdf6e3;
-            font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;text-align:center;}
-            .tg .tg-alz1{background-color:#eee8d5;text-align:left;vertical-align:top}
-            .tg .tg-0lax{text-align:left;vertical-align:top}
-        </style>
-        <table class="tg">
-        <thead>
-        <tr>
-            <th class="tg-0lax">Model</th>
-            <th class="tg-0lax">MAC</th>
-            <th class="tg-0lax">IP</th>
-        </tr>
-        </thead>   
-    '''
     table_body_string = ''
     table_body_close = '''
         </tbody>
         </table>
         </center>
     '''
+    dhcp_option = ''
+    try:
+        # Get list of clients on network, filtering on timespan of last 14 days
+        vlans = dashboard.appliance.getNetworkApplianceVlans(network)
+    except meraki.APIError as e:
+        print(f'Meraki API error: {e}')
+        print(f'status code = {e.status}')
+        print(f'reason = {e.reason}')
+        print(f'error = {e.message}')
+    except Exception as e:
+        print(f'some other error: {e}')
+    else:
+        # this section needs some work
+        # having trouble finding the vlan dhcp options
+        # need to re-work the loops and if statements
+        for vlan in vlans:
+            if vlan['id'] == table_id:
+                print(vlan)
+                for option in vlan['dhcpOptions']:
+                    if option['value'] != '':
+                        dhcp_option = option['value']
+                    print(f'DHCP Option: {dhcp_option}')
 
     try:
         # Get list of clients on network, filtering on timespan of last 14 days
-        clients = dashboard.networks.getNetworkClients(network, timespan=60*60*24*14, perPage=1000, total_pages='all')
-        # clients = json.dumps(clients)
+        clients = dashboard.networks.getNetworkClients(network, timespan=60*60*24*1, perPage=1000, total_pages='all')
     except meraki.APIError as e:
         print(f'Meraki API error: {e}')
         print(f'status code = {e.status}')
@@ -66,8 +64,7 @@ def main():
                 tg_class = 'tg-alz1'
             else:
                 tg_class = 'tg-0lax'
-            if client['status'] == 'Offline' and client['vlan'] in range(101,110) and counter <= 20:
-                # print(json.dumps(client, indent=3))
+            if client['status'] == 'Offline' and client['vlan'] == table_id:
                 client_dict = {
                     "client_description": client['description'],
                     "client_mac": client['mac'],
@@ -78,17 +75,87 @@ def main():
                     <tbody>
                     <tr>
                     <td class="{tg_class}">{client_dict["client_description"]}</td>
-                    <td class="{tg_class}">{client_dict["client_mac"]}</td>
-                    <td class="{tg_class}">{client_dict["client_ip"]}</td>
+                    <td class="{tg_class}"><pre>{client_dict["client_mac"]}</pre></td>
+                    <td class="{tg_class}"><pre>{client_dict["client_ip"]}</pre></td>
                     </tr>
                 '''
                 table_body_string += temp_string
                 counter += 1
+    number_of_clients = len(list_of_clients)
+    html_string = f'''
+        <style type="text/css">
+            body {{
+                background-color: #333;
+                color:#fff;
+                }}
 
+            span {{
+                border:1px solid #fff;
+                padding:5px 15px;
+                background:#444;
+                }}
+
+            th,td {{
+                border:1px solid #aaa;
+            }}
+
+            .tg  {{
+                border-collapse:collapse;
+                border-spacing:0;
+                }}
+
+            .tg td {{
+                font-family:Arial, sans-serif;
+                font-size:14px;
+                overflow:hidden;
+                padding:10px 50px;
+                word-break:normal;
+                }}
+
+            .tg th {{
+                font-family:Arial, sans-serif;
+                font-size:14px;
+                font-weight:bold;
+                text-transform:uppercase;
+                overflow:hidden;
+                padding:10px 5px;
+                word-break:normal;
+                text-align:center;
+                background-color:#555;
+                }}
+
+            .tg .tg-alz1 {{
+                background-color:#444;
+                color:#fff;
+                vertical-align:top
+                }}
+
+            .tg .tg-0lax {{
+                background-color:#333;
+                color:#fff;
+                vertical-align:top
+                }}
+        </style>
+
+        <center>
+        <div>
+        <h1>Table {str(table_id)[2:]} - VLAN {table_id} - {number_of_clients} client(s)</h1>
+        <h2><pre>Current Option: <span>{dhcp_option}</span></pre></h2>
+        </div>
+
+        <table class="tg">
+        <thead>
+        <tr>
+            <th>Model</th>
+            <th>MAC Address</th>
+            <th>IP Address</th>
+        </tr>
+        </thead>   
+    '''
     html_string += table_body_string
     html_string += table_body_close
 
-    print(html_string)
+    # print(html_string)
 
     # print(list_of_clients)
 
