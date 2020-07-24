@@ -39,13 +39,21 @@ for table in tables:
                     table_option = option['value']
                 else:
                     table_option = ''
-            table_dict = {"table":table['id'], "option":table_option, "clients":list_of_clients}
+            table_dict = {
+                "table": table['id'],
+                "option": table_option,
+                "clients": list_of_clients
+                }
         # loop through all the clients on the current table
         for client in clients:
             # make sure the client is on the same vlan as the table
             if client['vlan'] == table['id'] and client['status'] == 'Online':
                 # create the client dict and append it to the list of client dicts
-                client_dict = {"description":client['description'], "ip":client['ip'], "mac":client['mac']}
+                client_dict = {
+                    "description": client['description'],
+                    "ip": client['ip'],
+                    "mac": client['mac']
+                    }
                 list_of_clients.append(client_dict)
         # append the tables dict with list of clients dicts to the list of tables dict
         list_of_tables.append(table_dict)
