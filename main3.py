@@ -15,7 +15,7 @@ def main():
 
     network = 'L_613052499275810377'
 
-    table_id = 103
+    table_id = 108
     list_of_clients = []
     table_body_string = ''
     table_body_close = '''
@@ -23,7 +23,7 @@ def main():
         </table>
         </center>
     '''
-    dhcp_option = ''
+    dhcp_option = '<em>UNSET</em>'
     try:
         # Get list of clients on network, filtering on timespan of last 14 days
         vlans = dashboard.appliance.getNetworkApplianceVlans(network)
@@ -35,16 +35,10 @@ def main():
     except Exception as e:
         print(f'some other error: {e}')
     else:
-        # this section needs some work
-        # having trouble finding the vlan dhcp options
-        # need to re-work the loops and if statements
         for vlan in vlans:
-            if vlan['id'] == table_id:
-                print(vlan)
+            if vlan['id'] == table_id and 'dhcpOptions' in vlan:
                 for option in vlan['dhcpOptions']:
-                    if option['value'] != '':
-                        dhcp_option = option['value']
-                    print(f'DHCP Option: {dhcp_option}')
+                    dhcp_option = option['value']
 
     try:
         # Get list of clients on network, filtering on timespan of last 14 days
@@ -155,12 +149,7 @@ def main():
     html_string += table_body_string
     html_string += table_body_close
 
-    # print(html_string)
-
-    # print(list_of_clients)
-
-
-    f = open("tableX.html", "w")
+    f = open(f"table{str(table_id)[2:]}.html", "w")
     f.write(html_string)
     f.close()
 
