@@ -1,13 +1,12 @@
 import meraki
 import creds
-import json
-import os
 
 API_KEY = creds.creds['api_key']
 
+
 def main():
     dashboard = meraki.DashboardAPI(
-        api_key = API_KEY,
+        api_key=API_KEY,
         base_url='https://api-mp.meraki.com/api/v1/',
         print_console=False,
         output_log=False
@@ -15,7 +14,7 @@ def main():
 
     network = 'L_613052499275810377'
 
-    table_id = 108
+    table_id = 107
     list_of_clients = []
     table_body_string = ''
     table_body_close = '''
@@ -58,7 +57,7 @@ def main():
                 tg_class = 'tg-alz1'
             else:
                 tg_class = 'tg-0lax'
-            if client['status'] == 'Offline' and client['vlan'] == table_id:
+            if client['status'] == 'Online' and client['vlan'] == table_id:
                 client_dict = {
                     "client_description": client['description'],
                     "client_mac": client['mac'],
@@ -130,6 +129,8 @@ def main():
                 vertical-align:top
                 }}
         </style>
+
+        <META HTTP-EQUIV="refresh" CONTENT="30">
 
         <center>
         <div>

@@ -1,7 +1,7 @@
-
 creds.py
 .DS_Store
 __pycache__/creds.cpython-37.pyc
 *.pyc
 *.csv
-*.html
+venv/
+.idea/
