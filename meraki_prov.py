@@ -1,7 +1,7 @@
 import meraki
-import creds
+import config
 
-API_KEY = creds.creds['api_key']
+API_KEY = config.api_key
 
 
 def main():
