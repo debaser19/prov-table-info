@@ -152,9 +152,10 @@ def getClients(num, value):
     print(f'Selected Table: {value}')
 
     filtered_clients = clients.loc[clients['vlan'] == int(value)]
-    print(filtered_clients)
+    online_clients = filtered_clients.loc[clients['status'] == "Online"]
+    print(online_clients)
 
-    return filtered_clients.to_dict('records')
+    return online_clients.to_dict('records')
 
 
 if __name__ == '__main__':

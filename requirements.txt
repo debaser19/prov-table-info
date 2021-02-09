@@ -1,3 +1,5 @@
-flask
-requests
+dash
 meraki
+plotly
+pandas
+dash_bootstrap_components

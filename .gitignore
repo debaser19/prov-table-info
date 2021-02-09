@@ -13,3 +13,4 @@ include/
 lib64
 pyvenv.cfg
 config.py
+etc/
