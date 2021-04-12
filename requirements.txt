@@ -1,5 +1,3 @@
-dash
 meraki
-plotly
 pandas
-dash_bootstrap_components
+streamlit

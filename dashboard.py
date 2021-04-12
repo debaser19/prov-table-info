@@ -6,12 +6,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
 from dash.dependencies import Input, Output
-import config
+import auth
 import meraki
 import pandas as pd
+import main
 
 
-api_key = config.api_key
+api_key = auth.api_key
 
 external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -91,7 +92,7 @@ createLayout()
 
 dashboard = meraki.DashboardAPI(
         api_key=api_key,
-        base_url='https://api-mp.meraki.com/api/v1/',
+        base_url='https://api-mp.meraki.com/api/v0/',
         print_console=False,
         output_log=False
     )
