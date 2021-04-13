@@ -6,3 +6,4 @@ creds.py
 config.py
 auth.py
 .vscode
+test.py
