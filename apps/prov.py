@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import auth
 
+
 #TODO: need to move layout to new function
 def get_dhcp_option(dashboard, warehouse, vlan):
     vlans = dashboard.appliance.getNetworkApplianceVlans(warehouse)
